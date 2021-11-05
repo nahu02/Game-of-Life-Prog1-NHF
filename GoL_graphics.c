@@ -5,6 +5,7 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_ttf.h>
 #include <math.h>
+#include "src/debugmalloc.h"
 #include "GoL_logics.h"
 
 typedef enum Allapot{

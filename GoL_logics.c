@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <SDL2/SDL.h>
 #include "GoL_logics.h"
+#include "src/debugmalloc.h"
 
 
 static void print_tabla(Tabla* t); // Deprecated, used for debugging
