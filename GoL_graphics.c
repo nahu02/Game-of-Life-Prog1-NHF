@@ -124,6 +124,9 @@ int main(void){
                     }
                 }
                 break;
+            case SDL_KEYDOWN:
+                    if (ev.key.keysym.sym == SDLK_ESCAPE) {menu(&env, font_menu, &gombok_helye);}
+                break;
         }
     }
     
@@ -236,7 +239,7 @@ void rajz_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
     for(int sor = 1; sor < (t->m-1); sor++){
         for (int oszlop = 1; oszlop < (t->sz-1); oszlop++){
             if(xy_in_rect(x, y, t->rects[sor][oszlop])){
-                SDL_Log("Kattintva: (%d, %d), Ennek értéke:%d!\n", oszlop, sor, t->g[sor][oszlop]);
+                // SDL_Log("Kattintva: (%d, %d), Ennek értéke:%d!\n", oszlop, sor, t->g[sor][oszlop]);
                 flip(t, sor, oszlop);
                 rajz_rajzol_cella(env->renderer, t, sor, oszlop);
                 break;
