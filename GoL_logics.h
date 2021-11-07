@@ -7,9 +7,13 @@ typedef struct Tabla{
     SDL_Rect** rects; // A képernyőn megjelenített cellák listája (2d array)
 }Tabla;
 
-void init_tabla(Tabla* ujtabla, int szelesseg, int magassag); // Létrehozza, feltölti nullákkal (hasznélat után törlendő, memóriaszemét!!)
-void destroy_tabla(Tabla* regitabla); // Kitörli a táblát
+// Létrehozza, feltölti nullákkal (használat után törlendő, memóriaszemét!!)
+void init_tabla(Tabla* ujtabla, int szelesseg, int magassag);
+
+void destroy_tabla(Tabla* regitabla);
+
 void flip(Tabla* t, int sor, int oszlop);
+
 void uj_generacio(Tabla *t);
 
 #endif

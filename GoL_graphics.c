@@ -30,6 +30,7 @@ typedef struct Harom_hely{
 
 static int xy_in_rect(const int x, const int y, SDL_Rect rect); // Megvizsgálja hogy a kurzor (x,y) az SDL_Rect elemen belül található -e (returns 1 or 0)
 static void rajz_kattint(Ablak_info *env, Tabla *t, int x, int y);
+static void rajz_nextgen(Ablak_info *env, Tabla *t);
 
 
 void menu       (Ablak_info *env, TTF_Font *font_menu, Harom_hely *gombok_helye);
@@ -125,7 +126,8 @@ int main(void){
                 }
                 break;
             case SDL_KEYDOWN:
-                    if (ev.key.keysym.sym == SDLK_ESCAPE) {menu(&env, font_menu, &gombok_helye);}
+                    if (ev.key.keysym.sym == SDLK_ESCAPE)                      {menu(&env, font_menu, &gombok_helye);}
+                    if (env.state == s_rajz & ev.key.keysym.sym == SDLK_SPACE) {rajz_nextgen(&env, &t);}
                 break;
         }
     }
@@ -246,4 +248,9 @@ void rajz_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
             }
         }
     }
+}
+
+void rajz_nextgen(Ablak_info *env, Tabla *t){
+    uj_generacio(t);
+    rajz(env, t);
 }
