@@ -107,17 +107,14 @@ int main(void){
                     if(env.state == s_menu){
                         if( xy_in_rect(x, y, gombok_helye.j) ){
                             // Játek
-                            SDL_Log("Jatek!\n");
                             tabla_meret(&env, &t);
                             
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.b) ){
                             // Betölt
-                            SDL_Log("Betolt!\n");
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.s) ){
                             // Súgó
-                            SDL_Log("Sugo!\n");
                         }
                     }
                     else if(env.state == s_rajz){
@@ -126,8 +123,8 @@ int main(void){
                 }
                 break;
             case SDL_KEYDOWN:
-                    if (ev.key.keysym.sym == SDLK_ESCAPE)                      {menu(&env, font_menu, &gombok_helye);}
-                    if (env.state == s_rajz & ev.key.keysym.sym == SDLK_SPACE) {rajz_nextgen(&env, &t);}
+                    if (                      ev.key.keysym.sym == SDLK_ESCAPE) {menu(&env, font_menu, &gombok_helye);}
+                    if (env.state == s_rajz & ev.key.keysym.sym == SDLK_SPACE ) {rajz_nextgen(&env, &t);}
                 break;
         }
     }
@@ -251,6 +248,16 @@ void rajz_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
 }
 
 void rajz_nextgen(Ablak_info *env, Tabla *t){
-    uj_generacio(t);
-    rajz(env, t);
+    OszlopSor_Lista_Elem* fej = uj_generacio(t);
+    for(OszlopSor_Lista_Elem* iter = fej; iter != NULL; iter = iter->next){
+        rajz_rajzol_cella(env->renderer, t, iter->sor, iter->oszlop);
+    }
+
+    // free linked list
+    OszlopSor_Lista_Elem* elozo = NULL;
+    for(OszlopSor_Lista_Elem* iter = fej; iter != NULL; iter = iter->next){
+        free(elozo);
+        elozo = iter;
+    }
+    free(elozo);
 }

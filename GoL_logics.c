@@ -61,10 +61,12 @@ void flip(Tabla* t, int sor, int oszlop){
         t->g[sor][oszlop] = 1;
 }
 
-void uj_generacio(Tabla *t){ 
+OszlopSor_Lista_Elem* uj_generacio(Tabla *t){ 
     int magassag = t -> m;
     int szelesseg = t -> sz;
     Tabla uj;
+    OszlopSor_Lista_Elem *fej = NULL;
+
     init_tabla(&uj, szelesseg-2, magassag-2); // Sajnos muszáj kivonni kettőt, hiszen a szegélyt az init magától megalkotja
     for(int sor=0; sor<magassag; sor++){
         for(int oszlop=0; oszlop<szelesseg; oszlop++){
@@ -74,13 +76,25 @@ void uj_generacio(Tabla *t){
                 if (t->g[sor][oszlop] == 0) {
                     if (szomszedok == 3){
                         uj.g[sor][oszlop] = 1;
+                        OszlopSor_Lista_Elem *legutobbi_valtozas;
+                        legutobbi_valtozas = (OszlopSor_Lista_Elem*) malloc(sizeof(OszlopSor_Lista_Elem));
+                        legutobbi_valtozas->next = fej;
+                        legutobbi_valtozas->oszlop = oszlop;
+                        legutobbi_valtozas->sor = sor;
+                        fej = legutobbi_valtozas;
                     }
                 }
                 else{
                    if (szomszedok < 2 || szomszedok > 3){
                         uj.g[sor][oszlop] = 0;
+                        OszlopSor_Lista_Elem *legutobbi_valtozas;
+                        legutobbi_valtozas = (OszlopSor_Lista_Elem*) malloc(sizeof(OszlopSor_Lista_Elem));
+                        legutobbi_valtozas->next = fej;
+                        legutobbi_valtozas->oszlop = oszlop;
+                        legutobbi_valtozas->sor = sor;
+                        fej = legutobbi_valtozas;
                     }
-                }      
+                }
             }
         }
     }
@@ -90,5 +104,5 @@ void uj_generacio(Tabla *t){
         }
     }
     destroy_tabla(&uj);
-
+    return fej;
 }
