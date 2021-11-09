@@ -1,3 +1,15 @@
+/**
+ * @file GoL_logics.c
+ * @author Nagy Ábel (CPD63P) (nagy.abel@edu.bme.hu)
+ * @brief A játék fő logikáját leíró fájl.
+ * A játéktábla manipulálásával foglalkozik.
+ * @version 0.1
+ * @date 2021-11-08
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -5,9 +17,21 @@
 #include "GoL_logics.h"
 #include "src/debugmalloc.h"
 
+/**
+ * @brief A konzolra kiírja a Tabla objektumot (- a Halott, @ az Élő cella).
+ * A függvény csak debugginghoz használandó, valós haszna nincs. 
+ * @param t Tabla*
+ */
+static void print_tabla(Tabla* t);
 
-static void print_tabla(Tabla* t); // Deprecated, used for debugging
-static int szomszedok_szama(Tabla* t, int x, int y); // Megszámolja a t táblán az x,y pont élő szomszédait
+/**
+ * @brief Megszámolja a Tabla objektumon az x,y (sor, oszlop) pont élő szomszédait.
+ * @param t Tabla*
+ * @param x int | sor
+ * @param y int | oszlop
+ * @return int | szomszédok száma
+ */
+static int szomszedok_szama(Tabla* t, int x, int y);
 
 void init_tabla(Tabla* ujtabla, int szelesseg, int magassag){
     szelesseg += 2; // A kívánt x*y tábla körül egy "láthatatlan" keret van, amin mindig halott cellák vannak
