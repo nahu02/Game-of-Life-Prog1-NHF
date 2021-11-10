@@ -25,37 +25,37 @@
 /**
  * @brief Kiírja a megadott feliratot a megadott helyre a megadott betűtípussal.
  * A menü gombjainak feliratozásához használt.
- * @param renderer SDL_Renderer*
- * @param font_menu TTF_Font* | Egy betöltött betűtípus
- * @param hova SDL_Rect
- * @param str const char*
+ * @param renderer
+ * @param font_menu Egy betöltött betűtípus
+ * @param hova
+ * @param str
  */
 static void szoveg_kiiro(SDL_Renderer *renderer, TTF_Font *font_menu, SDL_Rect hova, const char str[]);
 /**
  * @brief kirajzol egy téglalapot és a megadott szöveget írja rá.
  * A menü gombjainak kirajzolásához használt.
- * @param renderer SDL_Renderer*
- * @param font_menu TTF_Font* | Egy betöltött betűtípus
- * @param gomb SDL_Rect
- * @param felirat const char*
+ * @param renderer 
+ * @param font_menu Egy betöltött betűtípus
+ * @param gomb 
+ * @param felirat
  */
 static void menu_rajzol_gomb(SDL_Renderer *renderer, TTF_Font *font_menu, SDL_Rect gomb, const char felirat[]);
 /**
  * @brief kirajzolja egy Tábla objektum g gridje szerinti megadott (sor, oszlop) cellát a képernyőre.
  * Frissíti a renderert.
- * @param renderer SDL_Renderer*
- * @param t Tabla*
- * @param sor int
- * @param oszlop int
+ * @param renderer
+ * @param t
+ * @param sor
+ * @param oszlop
  */
 static void jatek_rajzol_cella(SDL_Renderer *renderer, Tabla *t, int sor, int oszlop);
 /**
  * @brief Egy megadott felületet letakar és rárajzolja a játékterület összes celláját.
  * Fontos, hogy nem az egész képernyőre raajzol ki, hanem csak a megadott területre.
  * Elég lassú lehet.
- * @param renderer SDL_Renderer*
- * @param hova SDL_Rect
- * @param t Tabla*
+ * @param renderer
+ * @param hova
+ * @param t
  */
 static void jatek_kirajzol(SDL_Renderer *renderer, SDL_Rect hova, Tabla *t);
 

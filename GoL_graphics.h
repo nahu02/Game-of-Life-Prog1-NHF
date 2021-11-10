@@ -36,10 +36,10 @@ typedef enum Allapot{
 /**
  * @brief Az Ablakra vonatkozó minden alapvető tulajdonság.
  * 
- * @param renderer SDL_Renderer*
- * @param state Allapot
- * @param width_screen int
- * @param height_screen int
+ * @param renderer
+ * @param state
+ * @param width_screen
+ * @param height_screen
  */
 typedef struct Ablak_info{
     SDL_Renderer *renderer;
@@ -50,9 +50,9 @@ typedef struct Ablak_info{
 /**
  * @brief 3 SDL_Rect, amik a renderer-n belül megmondják hol vannak a gombok.
  * Az s_menu állapotban használatos.
- * @param j SDL_Rect | A 'Játék' gomb jelenlegi helye a képernyőn
- * @param b SDL_Rect | A 'Betölt' gomb jelenlegi helye a képernyőn
- * @param s SDL_Rect | A 'Súgó' gomb jelenlegi helye a képernyőn
+ * @param j A 'Játék' gomb jelenlegi helye a képernyőn
+ * @param b A 'Betölt' gomb jelenlegi helye a képernyőn
+ * @param s A 'Súgó' gomb jelenlegi helye a képernyőn
  */
 typedef struct Harom_hely{
     SDL_Rect j, b, s;
@@ -61,55 +61,55 @@ typedef struct Harom_hely{
 /**
  * @brief Inicializálja az SDL-t, betölti az alapállapotokat az Ablak_info objektumba.
  * Figyel a lehetséges hibákra, és hibaüzenettel kilép, ha fellépnek.
- * @param env Ablak_info*
+ * @param env
  */
 void sdl_init(Ablak_info *env);
 /**
  * @brief Megvizsgálja hogy az (x,y) koordináta (általában a kurzor) az SDL_Rect elemen belül található -e (returns 1 or 0)
  * 
- * @param x const int
- * @param y const int
- * @param rect SDL_Rect
- * @return int | 1 or 0
+ * @param x
+ * @param y
+ * @param rect
+ * @return 1 or 0
  */
 int xy_in_rect(const int x, const int y, SDL_Rect rect);
 /**
  * @brief Megváltoztatja az Ablak_info objektum state-jét s_menu-re.
  * Eltüntet bármit ami épp a képernyőn van és kirajzolja a főmenüt.
- * @param env Ablak_info*
- * @param font_menu TTF_Font | Egy betöltött betűtípus
- * @param gombok_helye Harom_hely*
+ * @param env
+ * @param font_menu  Egy betöltött betűtípus
+ * @param gombok_helye
  */
 void menu(Ablak_info *env, TTF_Font *font_menu, Harom_hely *gombok_helye);
 /**
  * @brief Megváltoztatja az Ablak_info objektum state-jét s_tabla_meret-re.
  * Eltüntet bármit ami épp a képernyőn van és kirajzolja a tábla méretét kiválasztó felületet.
  * Inicializálja a Tabla objektumot a megadott adatokkal.
- * @param env Ablak_info*
- * @param t Tabla*
+ * @param env
+ * @param t
  */
 void tabla_meret(Ablak_info *env, Tabla *t);
 /**
  * @brief Megváltoztatja az Ablak_info objektum state-jét s_jatek-ra.
  * Eltüntet bármit ami épp a képernyőn van és kirajzolja a játéktáblát.
- * @param env Ablak_info*
- * @param t Tabla*
+ * @param env
+ * @param t
  */
 void jatek(Ablak_info *env, Tabla *t);
 /**
  * @brief Ha az (x,y) koordináta egy cella belsejében van, megváltoztatja annak állapotát.
  * A s_jatek állapotban használatos, kattintás ellenőrzésére.
- * @param env Ablak_info*
- * @param t Tabla*
- * @param x int
- * @param y int
+ * @param env
+ * @param t
+ * @param x
+ * @param y
  */
 void jatek_kattint(Ablak_info *env, Tabla *t, int x, int y);
 /**
  * @brief A szimulációt a következő állapotra lápteti.
  * Ki is rajzolja a változásokat.
- * @param env Ablak_info*
- * @param t Tabla*
+ * @param env
+ * @param t
  */
 void jatek_nextgen(Ablak_info *env, Tabla *t);
 

@@ -20,16 +20,16 @@
 /**
  * @brief A konzolra kiírja a Tabla objektumot (- a Halott, @ az Élő cella).
  * A függvény csak debugginghoz használandó, valós haszna nincs. 
- * @param t Tabla*
+ * @param t
  */
 static void print_tabla(Tabla* t);
 
 /**
  * @brief Megszámolja a Tabla objektumon az x,y (sor, oszlop) pont élő szomszédait.
- * @param t Tabla*
- * @param x int | sor
- * @param y int | oszlop
- * @return int | szomszédok száma
+ * @param t
+ * @param x sor
+ * @param y oszlop
+ * @return szomszédok száma
  */
 static int szomszedok_szama(Tabla* t, int x, int y);
 
