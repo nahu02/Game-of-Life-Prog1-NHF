@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef JATEKALLAS_H
-#define JATEKALLAS_H
+#ifndef GOL_LOGICS_H
+#define GOL_LOGICS_H
 
 /**
  * @brief A GoL játéktábla tárolására való struct

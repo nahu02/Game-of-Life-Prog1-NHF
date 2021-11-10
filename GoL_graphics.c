@@ -3,8 +3,8 @@
  * @author Nagy Ábel (CPD63P) (nagy.abel@edu.bme.hu)
  * @brief A program grafikáját szabályozzó fájl.
  * Felelős mindenért, ami a megjelenítés része.
- * @version 0.1
- * @date 2021-11-08
+ * @version 0.2
+ * @date 2021-11-10
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -19,57 +19,9 @@
 #include <math.h>
 #include "src/debugmalloc.h"
 #include "GoL_logics.h"
+#include "GoL_graphics.h"
 
-/**
- * @brief A program jelenlegi állapotát leíró enum.
- */
-typedef enum Allapot{
-    /** A menü a három gombbal */
-    s_menu,
-    /** A tábla méretének megadása a játék gombra kattintás után */
-    s_tabla_meret,
-    /** A játéktábla */
-    s_jatek,
-    /** A mentés választó menü, a betöltés gomb megnyomása után */
-    s_betolt,
-    /** A súgó, a súgó gomb megnyomása után */
-    s_sugo
-}Allapot;
 
-/**
- * @brief Az Ablakra vonatkozó minden alapvető tulajdonság.
- * 
- * @param renderer SDL_Renderer*
- * @param state Allapot
- * @param width_screen int
- * @param height_screen int
- */
-typedef struct Ablak_info{
-    SDL_Renderer *renderer;
-    Allapot state;
-    int width_screen, height_screen;
-}Ablak_info;
-
-/**
- * @brief 3 SDL_Rect, amik a renderer-n belül megmondják hol vannak a gombok.
- * Az s_menu állapotban használatos.
- * @param j SDL_Rect | A 'Játék' gomb jelenlegi helye a képernyőn
- * @param b SDL_Rect | A 'Betölt' gomb jelenlegi helye a képernyőn
- * @param s SDL_Rect | A 'Súgó' gomb jelenlegi helye a képernyőn
- */
-typedef struct Harom_hely{
-    SDL_Rect j, b, s;
-}Harom_hely;
-
-/**
- * @brief Megvizsgálja hogy az (x,y) koordináta (általában a kurzor) az SDL_Rect elemen belül található -e (returns 1 or 0)
- * 
- * @param x const int
- * @param y const int
- * @param rect SDL_Rect
- * @return int | 1 or 0
- */
-static int xy_in_rect(const int x, const int y, SDL_Rect rect);
 /**
  * @brief Kiírja a megadott feliratot a megadott helyre a megadott betűtípussal.
  * A menü gombjainak feliratozásához használt.
@@ -106,52 +58,8 @@ static void jatek_rajzol_cella(SDL_Renderer *renderer, Tabla *t, int sor, int os
  * @param t Tabla*
  */
 static void jatek_kirajzol(SDL_Renderer *renderer, SDL_Rect hova, Tabla *t);
-/**
- * @brief Ha az (x,y) koordináta egy cella belsejében van, megváltoztatja annak állapotát.
- * A s_jatek állapotban használatos, kattintás ellenőrzésére.
- * @param env Ablak_info*
- * @param t Tabla*
- * @param x int
- * @param y int
- */
-static void jatek_kattint(Ablak_info *env, Tabla *t, int x, int y);
-/**
- * @brief A szimulációt a következő állapotra lápteti.
- * Ki is rajzolja a változásokat.
- * @param env Ablak_info*
- * @param t Tabla*
- */
-static void jatek_nextgen(Ablak_info *env, Tabla *t);
 
-/**
- * @brief Inicializálja az SDL-t, betölti az alapállapotokat az Ablak_info objektumba.
- * Figyel a lehetséges hibákra, és hibaüzenettel kilép, ha fellépnek.
- * @param env Ablak_info*
- */
-void sdl_init(Ablak_info *env);
-/**
- * @brief Megváltoztatja az Ablak_info objektum state-jét s_menu-re.
- * Eltüntet bármit ami épp a képernyőn van és kirajzolja a főmenüt.
- * @param env Ablak_info*
- * @param font_menu TTF_Font | Egy betöltött betűtípus
- * @param gombok_helye Harom_hely*
- */
-void menu(Ablak_info *env, TTF_Font *font_menu, Harom_hely *gombok_helye);
-/**
- * @brief Megváltoztatja az Ablak_info objektum state-jét s_tabla_meret-re.
- * Eltüntet bármit ami épp a képernyőn van és kirajzolja a tábla méretét kiválasztó felületet.
- * Inicializálja a Tabla objektumot a megadott adatokkal.
- * @param env Ablak_info*
- * @param t Tabla*
- */
-void tabla_meret(Ablak_info *env, Tabla *t);
-/**
- * @brief Megváltoztatja az Ablak_info objektum state-jét s_jatek-ra.
- * Eltüntet bármit ami épp a képernyőn van és kirajzolja a játéktáblát.
- * @param env Ablak_info*
- * @param t Tabla*
- */
-void jatek(Ablak_info *env, Tabla *t);
+
 
 void sdl_init(Ablak_info *env){
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
@@ -171,81 +79,6 @@ void sdl_init(Ablak_info *env){
     env->renderer = renderer;
     SDL_RenderClear(env->renderer);
     TTF_Init();
-}
-
-int main(void){
-    Ablak_info env = {NULL, s_menu, 800, 600};
-    sdl_init(&env);
-
-    TTF_Font *font_menu = TTF_OpenFont("C:/Windows/Fonts/OCRAEXT.TTF", 54);
-    if (!font_menu) {
-        SDL_Log("Nem sikerult megnyitni a fontot! %s\n", TTF_GetError());
-        exit(1);
-    }
-
-    Harom_hely gombok_helye;
-    Tabla t;
-
-    menu(&env, font_menu, &gombok_helye);
- 
-    SDL_Event ev;
-    while (SDL_WaitEvent(&ev) && ev.type != SDL_QUIT) { 
-        switch(ev.type){ 
-            case SDL_WINDOWEVENT:
-                if(ev.window.event == SDL_WINDOWEVENT_RESIZED){
-                    env.width_screen = ev.window.data1;
-                    env.height_screen = ev.window.data2;
-                    switch(env.state){
-                        case s_menu:
-                            menu(&env, font_menu, &gombok_helye);
-                            break;
-                        case s_tabla_meret:
-                            tabla_meret(&env, &t);
-                            break;
-                        case s_jatek:
-                            jatek(&env, &t);
-                            break;
-                        case s_betolt:
-                            // betolt(&env);
-                            break;
-                        case s_sugo:
-                            // sugo(&env);
-                            break;
-                    }
-                }
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                if (ev.button.button == SDL_BUTTON_LEFT) {
-                    const int x = ev.button.x, y = ev.button.y;
-                    if(env.state == s_menu){
-                        if( xy_in_rect(x, y, gombok_helye.j) ){
-                            // Játek
-                            tabla_meret(&env, &t);
-                            
-                        }
-                        else if ( xy_in_rect(x, y, gombok_helye.b) ){
-                            // Betölt
-                        }
-                        else if ( xy_in_rect(x, y, gombok_helye.s) ){
-                            // Súgó
-                        }
-                    }
-                    else if(env.state == s_jatek){
-                        jatek_kattint(&env, &t, x, y);
-                    }
-                }
-                break;
-            case SDL_KEYDOWN:
-                    if (                      ev.key.keysym.sym == SDLK_ESCAPE) {menu(&env, font_menu, &gombok_helye);}
-                    if (env.state == s_jatek & ev.key.keysym.sym == SDLK_SPACE ) {jatek_nextgen(&env, &t);} // Ideiglenes, a későbbiekben gomb lesz a grafikai felületen (bárlehet hogy kényelmi szempontből ez is marad)
-                break;
-        }
-    }
-    
-    destroy_tabla(&t);
-    TTF_CloseFont(font_menu);
-    SDL_Quit();
-    return 0;
 }
 
 int xy_in_rect(const int x, const int y, SDL_Rect rect){
@@ -302,7 +135,7 @@ void tabla_meret(Ablak_info *env, Tabla *t){
     env->state = s_tabla_meret;
     SDL_RenderClear(env->renderer);
 
-    init_tabla(t, 15, 10);
+    init_tabla(t, 20, 20);
 
     jatek(env, t);
 }
