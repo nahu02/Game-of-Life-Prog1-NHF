@@ -156,8 +156,14 @@ void jatek_rajzol_cella(SDL_Renderer *renderer, Tabla *t, int sor, int oszlop){
 void jatek_kirajzol(SDL_Renderer *renderer, SDL_Rect hova, Tabla *t){
     int cella_m = hova.h/(t->m-2), cella_sz = hova.w/(t->sz-2);
     // A cellák legyenek négyzet alakúak, akkor is ha a kivetítő felület nem az
-    if (cella_m < cella_sz) {cella_sz = cella_m; hova.x = (hova.w-(cella_sz*(t->sz-2)))/2;}
-    else {cella_m = cella_sz; hova.y = (hova.h-(cella_m*(t->m-2)))/2;}
+    if (cella_m < cella_sz) {cella_sz = cella_m;}
+    else {cella_m = cella_sz;}
+
+    // A játéktábla a megjelenitési felület közepén jelenjen meg
+    int jatektabla_szelesseg = cella_sz*(t->sz-2);
+    int jatektabla_magassag  = cella_m *(t->m-2 );
+    hova.x += ((hova.w-(jatektabla_szelesseg))/2);
+    hova.y += ((hova.h-(jatektabla_magassag ))/2);
 
     for(int sor = 1; sor < (t->m-1); sor++){
         for (int oszlop = 1; oszlop < (t->sz-1); oszlop++){
@@ -175,7 +181,8 @@ void jatek(Ablak_info *env, Tabla *t){
     // Háttér
     boxRGBA(env->renderer, 0, 0, env->width_screen, env->height_screen, 17, 28, 7, 255);
 
-    SDL_Rect canvas = {0, 0, env->width_screen, env->height_screen};
+    SDL_Rect canvas = {(env->width_screen)/10, 0, (8*env->width_screen)/10, env->height_screen};
+    rectangleRGBA(env->renderer, canvas.x, canvas.y, canvas.x + canvas.w, canvas.y + canvas.h, 155, 255, 61, 255);
     jatek_kirajzol(env->renderer, canvas, t);
 
 }

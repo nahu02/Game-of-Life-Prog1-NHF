@@ -83,7 +83,7 @@ int main(void){
                 }
                 break;
             case SDL_KEYDOWN:
-                    if (                       ev.key.keysym.sym == SDLK_ESCAPE) {menu(&env, font_menu, &gombok_helye);}
+                    if (                       ev.key.keysym.sym == SDLK_ESCAPE) {menu(&env, font_menu, &gombok_helye); destroy_tabla(&t);}
                     if (env.state == s_jatek & ev.key.keysym.sym == SDLK_SPACE ) {jatek_nextgen(&env, &t);} // Ideiglenes, a későbbiekben gomb lesz a grafikai felületen (bárlehet hogy kényelmi szempontből ez is marad)
                 break;
         }
