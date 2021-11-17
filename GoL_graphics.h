@@ -2,8 +2,8 @@
  * @file GoL_graphics.h
  * @author Nagy Ábel (CPD63P) (nagy.abel@edu.bme.hu)
  * @brief A program megjelenítéséhez használt funkciókat és structokat leíró headerfájl.
- * @version 0.1
- * @date 2021-11-10
+ * @version 0.2
+ * @date 2021-11-15
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -112,5 +112,14 @@ void jatek_kattint(Ablak_info *env, Tabla *t, int x, int y);
  * @param t
  */
 void jatek_nextgen(Ablak_info *env, Tabla *t);
+/**
+ * @brief A felhasználótól bekér egy nevet, majd elmenti a játéktér jelenlegi állapotát azzal a névvel a ./saves mappába.
+ * Elenőrzi, hogy a név már foglalt -e, vagy tartalmaz -e invalid karaktereket. Szól a felhasználónak ha igen.
+ * Szól ha nem sikerült a mentés.
+ * @warning Léteznie kell egy ./saves mappának!
+ * @param env 
+ * @param t 
+ */
+void jatek_mentes(Ablak_info *env, Tabla *t);
 
 #endif

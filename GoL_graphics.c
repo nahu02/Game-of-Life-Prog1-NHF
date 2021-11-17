@@ -3,8 +3,8 @@
  * @author Nagy Ábel (CPD63P) (nagy.abel@edu.bme.hu)
  * @brief A program grafikáját szabályozzó fájl.
  * Felelős mindenért, ami a megjelenítés része.
- * @version 0.2
- * @date 2021-11-10
+ * @version 0.3
+ * @date 2021-11-15
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -213,4 +213,32 @@ void jatek_nextgen(Ablak_info *env, Tabla *t){
         elozo = iter;
     }
     free(elozo);
+}
+
+void jatek_mentes(Ablak_info *env, Tabla *t){
+    char name[63] = "./saves/";
+
+    strcat(name, "test"); // placeholder to be replaced by user input (max 50 char)
+    
+    strcat(name, ".txt");
+    FILE* fp = fopen(name, "wt");
+    if(fp == NULL){
+        SDL_Log("Hiba a %s fajl megnyitasaban!\n", name); // placeholder for actual message to the usr
+    }
+    else{
+        fprintf(fp, "0.1\n");
+        fprintf(fp, "%d %d\n", t->sz, t->m);
+        for(int sor = 0; sor < (t->m); sor++){
+        for (int oszlop = 0; oszlop < (t->sz); oszlop++){
+            fprintf(fp, "%d", t->g[sor][oszlop]);
+            if (oszlop != (t->sz-1)){
+                fputc(' ', fp);
+            }
+        }
+        fputc('\n', fp);
+        }
+        fclose(fp);
+    }
+
+
 }

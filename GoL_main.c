@@ -2,8 +2,8 @@
  * @file GoL_main.c
  * @author Nagy Ábel (CPD63P) (nagy.abel@edu.bme.hu)
  * @brief A program futtatásához szükséges main loop fájlaja.
- * @version 0.1
- * @date 2021-11-10
+ * @version 0.2
+ * @date 2021-11-17
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -85,6 +85,7 @@ int main(void){
             case SDL_KEYDOWN:
                     if (                       ev.key.keysym.sym == SDLK_ESCAPE) {menu(&env, font_menu, &gombok_helye); destroy_tabla(&t);}
                     if (env.state == s_jatek & ev.key.keysym.sym == SDLK_SPACE ) {jatek_nextgen(&env, &t);} // Ideiglenes, a későbbiekben gomb lesz a grafikai felületen (bárlehet hogy kényelmi szempontből ez is marad)
+                    if (env.state == s_jatek & ev.key.keysym.sym == SDLK_s     ) {jatek_mentes(&env, &t);} // Ideiglenes, a későbbiekben gomb lesz a grafikai felületen (bárlehet hogy kényelmi szempontből ez is marad)
                 break;
         }
     }
