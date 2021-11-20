@@ -3,8 +3,8 @@
  * @author Nagy Ábel (CPD63P) (nagy.abel@edu.bme.hu)
  * @brief A program grafikáját szabályozzó fájl.
  * Felelős mindenért, ami a megjelenítés része.
- * @version 0.3
- * @date 2021-11-15
+ * @version 0.4
+ * @date 2021-11-20
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -16,11 +16,20 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <math.h>
 #include "src/debugmalloc.h"
 #include "GoL_logics.h"
 #include "GoL_graphics.h"
 
+/**
+ * @brief Enum az icons.png fájl ikonjaival.
+ * A számozás megegyezik a képfájlban az ikonok sorrendjével.
+ */
+typedef enum Icon{
+    Play, Pause, Next,
+    Save, Home
+} Icon;
 
 /**
  * @brief Kiírja a megadott feliratot a megadott helyre a megadott betűtípussal.
@@ -41,7 +50,7 @@ static void szoveg_kiiro(SDL_Renderer *renderer, TTF_Font *font_menu, SDL_Rect h
  */
 static void menu_rajzol_gomb(SDL_Renderer *renderer, TTF_Font *font_menu, SDL_Rect gomb, const char felirat[]);
 /**
- * @brief kirajzolja egy Tábla objektum g gridje szerinti megadott (sor, oszlop) cellát a képernyőre.
+ * @brief Kirajzolja egy Tábla objektum g gridje szerinti megadott (sor, oszlop) cellát a képernyőre.
  * Frissíti a renderert.
  * @param renderer
  * @param t
@@ -58,6 +67,16 @@ static void jatek_rajzol_cella(SDL_Renderer *renderer, Tabla *t, int sor, int os
  * @param t
  */
 static void jatek_kirajzol(SDL_Renderer *renderer, SDL_Rect hova, Tabla *t);
+/**
+ * @brief Kirajzolja a képernyő koordinátákkal megadott pontjára a kért ikont.
+ * 
+ * @param env 
+ * @param ikon 
+ * @param x 
+ * @param y 
+ * @return A kirajzolt gomb helye
+ */
+static SDL_Rect ikon_kirazol(Ablak_info *env, Icon ikon, int x, int y);
 
 
 
@@ -76,7 +95,13 @@ void sdl_init(Ablak_info *env){
         SDL_Log("Nem hozhato letre a megjelenito: %s", SDL_GetError());
         exit(1);
     }
+    SDL_Texture *icons = IMG_LoadTexture(renderer, "./src/icons.png");
+    if (icons == NULL) {
+        SDL_Log("Nem nyithato meg a kepfajl: %s\n", IMG_GetError());
+        exit(1);
+    }
     env->renderer = renderer;
+    env->icons = icons;
     SDL_RenderClear(env->renderer);
     TTF_Init();
 }
@@ -181,13 +206,33 @@ void jatek(Ablak_info *env, Tabla *t){
     // Háttér
     boxRGBA(env->renderer, 0, 0, env->width_screen, env->height_screen, 17, 28, 7, 255);
 
+    // Gombok
+    // Home jobb felül, Save jobb alul, Next bal alul, Play/Pause bal alul a Next felett
+    env->ikonok_helye.h = ikon_kirazol(env, Home, env->width_screen - 69, 5                      ); // TODO
+    env->ikonok_helye.s = ikon_kirazol(env, Save, env->width_screen - 69, env->height_screen - 69);
+    env->ikonok_helye.n = ikon_kirazol(env, Next, 5,                      env->height_screen - 69);
+    env->ikonok_helye.p = ikon_kirazol(env, Play, 5,                      env->height_screen - (69 + 10 + 64)); // TODO
+
     SDL_Rect canvas = {(env->width_screen)/10, 0, (8*env->width_screen)/10, env->height_screen};
+    boxRGBA(env->renderer, canvas.x, canvas.y, canvas.x + canvas.w, canvas.y + canvas.h, 17, 28, 7, 255);
     rectangleRGBA(env->renderer, canvas.x, canvas.y, canvas.x + canvas.w, canvas.y + canvas.h, 155, 255, 61, 255);
     jatek_kirajzol(env->renderer, canvas, t);
 
 }
 
 void jatek_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
+        if(xy_in_rect(x, y, env->ikonok_helye.p)){
+            // Hát, ezt valahogy ki kéne még találni
+        }
+        if(xy_in_rect(x, y, env->ikonok_helye.n)){
+            jatek_nextgen(env, t);
+        }
+        if(xy_in_rect(x, y, env->ikonok_helye.s)){
+            jatek_mentes(env, t);
+        }
+        if(xy_in_rect(x, y, env->ikonok_helye.h)){
+            // Hát, ezt valahogy ki kéne még találni
+        }
     for(int sor = 1; sor < (t->m-1); sor++){
         for (int oszlop = 1; oszlop < (t->sz-1); oszlop++){
             if(xy_in_rect(x, y, t->rects[sor][oszlop])){
@@ -215,6 +260,13 @@ void jatek_nextgen(Ablak_info *env, Tabla *t){
     free(elozo);
 }
 
+void jatek_play_stop(Ablak_info *env, Tabla *t, int play_stop){
+    while (!play_stop){
+        jatek_nextgen(env, t);
+        SDL_Delay(500);
+    }
+}
+
 void jatek_mentes(Ablak_info *env, Tabla *t){
     char name[63] = "./saves/";
 
@@ -239,6 +291,12 @@ void jatek_mentes(Ablak_info *env, Tabla *t){
         }
         fclose(fp);
     }
-
-
 }
+
+SDL_Rect ikon_kirazol(Ablak_info *env, Icon ikon, int x, int y){
+    SDL_Rect honnan = { (ikon % 3) * 64, (ikon / 3) * 64, 64, 64 };
+    SDL_Rect hova = { x, y, 64, 64 };
+    SDL_RenderCopy(env->renderer, env->icons, &honnan, &hova);
+    return hova;
+}
+

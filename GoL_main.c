@@ -2,8 +2,8 @@
  * @file GoL_main.c
  * @author Nagy Ábel (CPD63P) (nagy.abel@edu.bme.hu)
  * @brief A program futtatásához szükséges main loop fájlaja.
- * @version 0.2
- * @date 2021-11-17
+ * @version 0.3
+ * @date 2021-11-20
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -15,13 +15,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <math.h>
 #include "src/debugmalloc.h"
 #include "GoL_logics.h"
 #include "GoL_graphics.h"
 
 int main(void){
-    Ablak_info env = {NULL, s_menu, 800, 600};
+    Ablak_info env = {NULL, s_menu, 800, 600, NULL};
     sdl_init(&env);
 
     TTF_Font *font_menu = TTF_OpenFont("C:/Windows/Fonts/OCRAEXT.TTF", 54);
@@ -31,6 +32,7 @@ int main(void){
     }
 
     Harom_hely gombok_helye;
+    Ikonok_hely ikonok_helye;
     Tabla t;
 
     menu(&env, font_menu, &gombok_helye);
@@ -50,7 +52,7 @@ int main(void){
                             tabla_meret(&env, &t);
                             break;
                         case s_jatek:
-                            jatek(&env, &t);
+                            jatek(&env,&t);
                             break;
                         case s_betolt:
                             // betolt(&env);
@@ -92,6 +94,7 @@ int main(void){
     
     destroy_tabla(&t);
     TTF_CloseFont(font_menu);
+    SDL_DestroyTexture(env.icons);
     SDL_Quit();
     return 0;
 }

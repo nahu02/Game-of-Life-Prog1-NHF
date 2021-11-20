@@ -2,8 +2,8 @@
  * @file GoL_graphics.h
  * @author Nagy Ábel (CPD63P) (nagy.abel@edu.bme.hu)
  * @brief A program megjelenítéséhez használt funkciókat és structokat leíró headerfájl.
- * @version 0.2
- * @date 2021-11-15
+ * @version 0.3
+ * @date 2021-11-20
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -13,6 +13,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
 #ifndef GOL_GRAPHICS_H
 #define GOL_GRAPHICS_H
@@ -34,21 +35,7 @@ typedef enum Allapot{
 }Allapot;
 
 /**
- * @brief Az Ablakra vonatkozó minden alapvető tulajdonság.
- * 
- * @param renderer
- * @param state
- * @param width_screen
- * @param height_screen
- */
-typedef struct Ablak_info{
-    SDL_Renderer *renderer;
-    Allapot state;
-    int width_screen, height_screen;
-}Ablak_info;
-
-/**
- * @brief 3 SDL_Rect, amik a renderer-n belül megmondják hol vannak a gombok.
+ * @brief 3 SDL_Rect, amik a rendereren belül megmondják hol vannak a gombok.
  * Az s_menu állapotban használatos.
  * @param j A 'Játék' gomb jelenlegi helye a képernyőn
  * @param b A 'Betölt' gomb jelenlegi helye a képernyőn
@@ -57,6 +44,36 @@ typedef struct Ablak_info{
 typedef struct Harom_hely{
     SDL_Rect j, b, s;
 }Harom_hely;
+
+/**
+ * @brief 4 SDL_Rect, amik a rendereren belül megmondják hol vannak az ikonok.
+ * Több ikont használó állapotban is használható, de csak az s_jatek állapotban lesz hasznos mind a 4.
+ * @param p A 'Play', vagy 'Stop' ikon jelenlegi helye a képernyőn. Ez a kettő sosem jelenik meg egyszerre, viszont mindig ugyanazt a helyet veszik fel.
+ * @param n A 'Next' ikon jelenlegi helye a képernyőn.
+ * @param s A 'Save' ikon jelenlegi helye a képernyőn.
+ * @param h A 'Home' ikon jelenlegi helye a képernyőn.
+ */
+typedef struct Ikonok_hely{
+    SDL_Rect p, n, s, h;
+}Ikonok_hely;
+
+/**
+ * @brief Az Ablakra vonatkozó minden alapvető tulajdonság.
+ * 
+ * @param renderer
+ * @param state
+ * @param width_screen
+ * @param height_screen
+ * @param icons
+ * @param ikonok_helye
+ */
+typedef struct Ablak_info{
+    SDL_Renderer *renderer;
+    Allapot state;
+    int width_screen, height_screen;
+    SDL_Texture *icons;
+    Ikonok_hely ikonok_helye;
+}Ablak_info;
 
 /**
  * @brief Inicializálja az SDL-t, betölti az alapállapotokat az Ablak_info objektumba.
@@ -97,7 +114,9 @@ void tabla_meret(Ablak_info *env, Tabla *t);
  */
 void jatek(Ablak_info *env, Tabla *t);
 /**
- * @brief Ha az (x,y) koordináta egy cella belsejében van, megváltoztatja annak állapotát.
+ * @brief Ellenőrzi az (x,y) koordináta helyét.
+ * Ha az egy cella belsejében van, megváltoztatja annak állapotát.
+ * Ha az egy ikon belsejében van, meghívja az ahhoz a gombhoz tartozó utasítást.
  * A s_jatek állapotban használatos, kattintás ellenőrzésére.
  * @param env
  * @param t
