@@ -118,12 +118,14 @@ void jatek(Ablak_info *env, Tabla *t);
  * Ha az egy cella belsejében van, megváltoztatja annak állapotát.
  * Ha az egy ikon belsejében van, meghívja az ahhoz a gombhoz tartozó utasítást.
  * A s_jatek állapotban használatos, kattintás ellenőrzésére.
+ * A visszatérési érték 1, ha ki kell lépni a menübe.
  * @param env
  * @param t
  * @param x
  * @param y
+ * @return alapesetben 0; 1, ha ki kell lépni a menübe
  */
-void jatek_kattint(Ablak_info *env, Tabla *t, int x, int y);
+int jatek_kattint(Ablak_info *env, Tabla *t, int x, int y);
 /**
  * @brief A szimulációt a következő állapotra lápteti.
  * Ki is rajzolja a változásokat.

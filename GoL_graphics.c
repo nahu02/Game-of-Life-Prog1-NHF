@@ -220,18 +220,21 @@ void jatek(Ablak_info *env, Tabla *t){
 
 }
 
-void jatek_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
+int jatek_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
         if(xy_in_rect(x, y, env->ikonok_helye.p)){
             // Hát, ezt valahogy ki kéne még találni
+            return 0;
         }
         if(xy_in_rect(x, y, env->ikonok_helye.n)){
             jatek_nextgen(env, t);
+            return 0;
         }
         if(xy_in_rect(x, y, env->ikonok_helye.s)){
             jatek_mentes(env, t);
+            return 0;
         }
         if(xy_in_rect(x, y, env->ikonok_helye.h)){
-            // Hát, ezt valahogy ki kéne még találni
+            return 1;
         }
     for(int sor = 1; sor < (t->m-1); sor++){
         for (int oszlop = 1; oszlop < (t->sz-1); oszlop++){
@@ -239,7 +242,7 @@ void jatek_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
                 // SDL_Log("Kattintva: (%d, %d), Ennek értéke:%d!\n", oszlop, sor, t->g[sor][oszlop]);
                 flip(t, sor, oszlop);
                 jatek_rajzol_cella(env->renderer, t, sor, oszlop);
-                break;
+                return 0;
             }
         }
     }

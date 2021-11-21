@@ -80,7 +80,10 @@ int main(void){
                         }
                     }
                     else if(env.state == s_jatek){
-                        jatek_kattint(&env, &t, x, y);
+                        if(jatek_kattint(&env, &t, x, y)){
+                            menu(&env, font_menu, &gombok_helye);
+                            destroy_tabla(&t);
+                        }
                     }
                 }
                 break;
