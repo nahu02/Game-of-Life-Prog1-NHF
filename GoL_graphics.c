@@ -221,21 +221,21 @@ void jatek(Ablak_info *env, Tabla *t){
 }
 
 int jatek_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
-        if(xy_in_rect(x, y, env->ikonok_helye.p)){
-            // Hát, ezt valahogy ki kéne még találni
-            return 0;
-        }
-        if(xy_in_rect(x, y, env->ikonok_helye.n)){
-            jatek_nextgen(env, t);
-            return 0;
-        }
-        if(xy_in_rect(x, y, env->ikonok_helye.s)){
-            jatek_mentes(env, t);
-            return 0;
-        }
-        if(xy_in_rect(x, y, env->ikonok_helye.h)){
-            return 1;
-        }
+    if(xy_in_rect(x, y, env->ikonok_helye.p)){
+        // Hát, ezt valahogy ki kéne még találni
+        return 0;
+    }
+    if(xy_in_rect(x, y, env->ikonok_helye.n)){
+        jatek_nextgen(env, t);
+        return 0;
+    }
+    if(xy_in_rect(x, y, env->ikonok_helye.s)){
+        jatek_mentes(env, t);
+        return 0;
+    }
+    if(xy_in_rect(x, y, env->ikonok_helye.h)){
+        return 1;
+    }
     for(int sor = 1; sor < (t->m-1); sor++){
         for (int oszlop = 1; oszlop < (t->sz-1); oszlop++){
             if(xy_in_rect(x, y, t->rects[sor][oszlop])){
