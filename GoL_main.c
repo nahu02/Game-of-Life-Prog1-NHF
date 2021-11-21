@@ -31,6 +31,12 @@ int main(void){
         exit(1);
     }
 
+    TTF_Font *font_mentes = TTF_OpenFont("C:/Windows/Fonts/OCRAEXT.TTF", 32);
+    if (!font_mentes) {
+        SDL_Log("Nem sikerult megnyitni a fontot! %s\n", TTF_GetError());
+        exit(1);
+    }
+
     Harom_hely gombok_helye;
     Ikonok_hely ikonok_helye;
     Tabla t;
@@ -80,7 +86,7 @@ int main(void){
                         }
                     }
                     else if(env.state == s_jatek){
-                        if(jatek_kattint(&env, &t, x, y)){
+                        if(jatek_kattint(&env, font_mentes, &t, x, y) == 1){
                             menu(&env, font_menu, &gombok_helye);
                             destroy_tabla(&t);
                         }
@@ -90,7 +96,7 @@ int main(void){
             case SDL_KEYDOWN:
                     if (                       ev.key.keysym.sym == SDLK_ESCAPE) {menu(&env, font_menu, &gombok_helye); destroy_tabla(&t);}
                     if (env.state == s_jatek & ev.key.keysym.sym == SDLK_SPACE ) {jatek_nextgen(&env, &t);} // Ideiglenes, a későbbiekben gomb lesz a grafikai felületen (bárlehet hogy kényelmi szempontből ez is marad)
-                    if (env.state == s_jatek & ev.key.keysym.sym == SDLK_s     ) {jatek_mentes(&env, &t);} // Ideiglenes, a későbbiekben gomb lesz a grafikai felületen (bárlehet hogy kényelmi szempontből ez is marad)
+                    if (env.state == s_jatek & ev.key.keysym.sym == SDLK_s     ) {jatek_mentes(&env, font_mentes, &t);} // Ideiglenes, a későbbiekben gomb lesz a grafikai felületen (bárlehet hogy kényelmi szempontből ez is marad)
                 break;
         }
     }

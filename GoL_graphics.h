@@ -120,12 +120,13 @@ void jatek(Ablak_info *env, Tabla *t);
  * A s_jatek állapotban használatos, kattintás ellenőrzésére.
  * A visszatérési érték 1, ha ki kell lépni a menübe.
  * @param env
+ * @param font_mentes A mentés nevének megadásához használandó betöltött betűtípus.
  * @param t
  * @param x
  * @param y
  * @return alapesetben 0; 1, ha ki kell lépni a menübe
  */
-int jatek_kattint(Ablak_info *env, Tabla *t, int x, int y);
+int jatek_kattint(Ablak_info *env, TTF_Font *font_mentes, Tabla *t, int x, int y);
 /**
  * @brief A szimulációt a következő állapotra lápteti.
  * Ki is rajzolja a változásokat.
@@ -139,8 +140,22 @@ void jatek_nextgen(Ablak_info *env, Tabla *t);
  * Szól ha nem sikerült a mentés.
  * @warning Léteznie kell egy ./saves mappának!
  * @param env 
+ * @param font_mentes A mentés nevének megadásához használandó betöltött betűtípus.
  * @param t 
  */
-void jatek_mentes(Ablak_info *env, Tabla *t);
+void jatek_mentes(Ablak_info *env, TTF_Font *font_mentes, Tabla *t);
+/**
+ * @brief Beolvas egy szoveget a billentyuzetrol.
+ * A kódrészlet az infoC oldalról származik apró módosításokkal.
+ * @param dest A tömb, ahová a beolvasott szöveg kerül.
+ * @param hossz A maximális hossz, ami beolvasható.
+ * @param teglalap A beolvasódoboz helye.
+ * @param hatter A háttár színe.
+ * @param szoveg A szöveg színe.
+ * @param font A rajzoláshoz használt font.
+ * @param renderer 
+ * @return 1 ha sikerült, 0 ha nem sikerült a beolvasás
+ */
+int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SDL_Color szoveg, TTF_Font *font, SDL_Renderer *renderer);
 
 #endif
