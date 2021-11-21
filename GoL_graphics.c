@@ -246,6 +246,7 @@ int jatek_kattint(Ablak_info *env, TTF_Font *font_mentes, Tabla *t, const int x,
             }
         }
     }
+    return 0;
 }
 
 void jatek_nextgen(Ablak_info *env, Tabla *t){
