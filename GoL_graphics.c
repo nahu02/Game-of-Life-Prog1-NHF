@@ -33,13 +33,13 @@ typedef enum Icon{
 
 /**
  * @brief Kiírja a megadott feliratot a megadott helyre a megadott betűtípussal.
- * A menü gombjainak feliratozásához használt.
+ * 
  * @param renderer
- * @param font_menu Egy betöltött betűtípus
+ * @param font Egy betöltött betűtípus
  * @param hova
  * @param str
  */
-static void szoveg_kiiro(SDL_Renderer *renderer, TTF_Font *font_menu, SDL_Rect hova, const char str[]);
+static void szoveg_kiiro(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect hova, const char str[]);
 /**
  * @brief kirajzol egy téglalapot és a megadott szöveget írja rá.
  * A menü gombjainak kirajzolásához használt.
@@ -110,11 +110,11 @@ int xy_in_rect(const int x, const int y, SDL_Rect rect){
     return ( (( x > rect.x ) && ( x < rect.x + rect.w ) && ( y > rect.y ) && ( y < rect.y + rect.h )) );
 }
 
-void szoveg_kiiro(SDL_Renderer *renderer, TTF_Font *font_menu, SDL_Rect hova, const char str[]){
+void szoveg_kiiro(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect hova, const char str[]){
     SDL_Surface *felirat = NULL;
     SDL_Texture *felirat_t = NULL;
     SDL_Color szoveg = {155, 255, 61};
-    felirat = TTF_RenderUTF8_Blended(font_menu, str, szoveg);
+    felirat = TTF_RenderUTF8_Blended_Wrapped(font, str, szoveg, hova.w);
     felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
     hova.x += (hova.w - felirat->w) / 2;
     hova.y += (hova.h - felirat->h) / 2;
@@ -156,11 +156,38 @@ void menu(Ablak_info *env, TTF_Font *font_menu, Harom_hely *gombok_helye){
     SDL_RenderPresent(env->renderer);
 }
 
-void tabla_meret(Ablak_info *env, Tabla *t){
+void tabla_meret(Ablak_info *env, TTF_Font *font_meret, Tabla *t){
     env->state = s_tabla_meret;
-    SDL_RenderClear(env->renderer);
 
-    init_tabla(t, 20, 20);
+    //Háttér
+    boxRGBA(env->renderer, 0, 0, env->width_screen, env->height_screen, 17, 28, 7, 255);
+
+    SDL_Rect szoveg_helye = {env->width_screen/20, 0, 18*env->width_screen/20, env->height_screen/3};
+    char szoveg[1000];
+    snprintf(szoveg, sizeof(szoveg), "Üdv a Game of Life szimulációban! Kérlek add meg a kívánt méretét a játéktábládnak. (x, y)!\n\nA neked ajánlott maximális méret: %dx%d", env->width_screen/25, env->height_screen/25);
+    szoveg_kiiro(env->renderer, font_meret, szoveg_helye, szoveg);
+
+    char szel_c[4], mag_c[4];
+    int szel = 0, mag = 0;
+    SDL_Rect szel_r = {  env->width_screen/3 - 40, 5*env->height_screen/6, 70, 40};
+    SDL_Rect mag_r  = {2*env->width_screen/3 - 40, 5*env->height_screen/6, 70, 40};
+    SDL_Color bg = {17, 28, 7}, fg = {155, 255, 61};
+    SDL_Rect szel_szov_helye = {0, 2*env->height_screen/3, env->width_screen/2, env->height_screen/6};
+    SDL_Rect mag_szov_helye  = {env->width_screen/2, 2*env->height_screen/3, env->width_screen/2, env->height_screen/6};
+    szoveg_kiiro(env->renderer, font_meret, szel_szov_helye, "Szélesség:");
+    SDL_RenderPresent(env->renderer);
+    while(szel == 0){
+        input_text(szel_c, 3, szel_r, bg, fg, font_meret, env->renderer);
+        szel = atoi(szel_c);
+    }
+    szoveg_kiiro(env->renderer, font_meret, mag_szov_helye, "Magasság:");
+    SDL_RenderPresent(env->renderer);
+    while(mag == 0){
+        input_text(mag_c, 3, mag_r, bg, fg, font_meret, env->renderer);
+        mag = atoi(mag_c);
+    }
+
+    init_tabla(t, szel, mag);
 
     jatek(env, t);
 }

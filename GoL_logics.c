@@ -47,14 +47,16 @@ void init_tabla(Tabla* ujtabla, int szelesseg, int magassag){
 }
 
 void destroy_tabla(Tabla* regitabla){
-    int magassag = regitabla -> m;
-    for(int sor=0; sor<magassag; sor++){
-        free(regitabla -> g[sor]);
-        free(regitabla -> rects[sor]);
+    if(regitabla != NULL){
+        int magassag = regitabla -> m;
+        for(int sor=0; sor<magassag; sor++){
+            free(regitabla -> g[sor]);
+            free(regitabla -> rects[sor]);
+        }
+        free(regitabla -> g);
+        free(regitabla -> rects);
+        regitabla = NULL;
     }
-    free(regitabla -> g);
-    free(regitabla -> rects);
-    regitabla = NULL;
 }
 
 void print_tabla(Tabla* t){

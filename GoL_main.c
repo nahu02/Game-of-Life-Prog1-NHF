@@ -55,7 +55,7 @@ int main(void){
                             menu(&env, font_menu, &gombok_helye);
                             break;
                         case s_tabla_meret:
-                            tabla_meret(&env, &t);
+                            tabla_meret(&env, font_mentes, &t);
                             break;
                         case s_jatek:
                             jatek(&env,&t);
@@ -75,7 +75,7 @@ int main(void){
                     if(env.state == s_menu){
                         if( xy_in_rect(x, y, gombok_helye.j) ){
                             // Játek
-                            tabla_meret(&env, &t);
+                            tabla_meret(&env, font_mentes, &t);
                             
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.b) ){

@@ -105,7 +105,7 @@ void menu(Ablak_info *env, TTF_Font *font_menu, Harom_hely *gombok_helye);
  * @param env
  * @param t
  */
-void tabla_meret(Ablak_info *env, Tabla *t);
+void tabla_meret(Ablak_info *env, TTF_Font *font_meret, Tabla *t);
 /**
  * @brief Megváltoztatja az Ablak_info objektum state-jét s_jatek-ra.
  * Eltüntet bármit ami épp a képernyőn van és kirajzolja a játéktáblát.
@@ -155,10 +155,10 @@ void jatek_mentes(Ablak_info *env, TTF_Font *font_mentes, Tabla *t);
  */
 int betolt_betoltes(Ablak_info *env, char *name, Tabla *t);
 /**
- * @brief Beolvas egy szoveget a billentyuzetrol.
+ * @brief Beolvas egy szöveget a billentyűzetről.
  * A kódrészlet az infoC oldalról származik apró módosításokkal.
- * @param dest A tömb, ahová a beolvasott szöveg kerül.
- * @param hossz A maximális hossz, ami beolvasható.
+ * @param dest A tömb, ahová a beolvasott szöveg kerül, \0-val a végén.
+ * @param hossz A maximális hossz, ami beolvasható, \0-vel együtt.
  * @param teglalap A beolvasódoboz helye.
  * @param hatter A háttár színe.
  * @param szoveg A szöveg színe.
