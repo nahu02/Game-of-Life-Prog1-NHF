@@ -145,6 +145,16 @@ void jatek_nextgen(Ablak_info *env, Tabla *t);
  */
 void jatek_mentes(Ablak_info *env, TTF_Font *font_mentes, Tabla *t);
 /**
+ * @brief A name nevű fájlt beolvassa, ha létezik tartalmát megjeleníti.
+ * Ha nem sikeres a beolvasás, 0-t ad vissza.
+ * @warning A name max 50 karakter lehet!
+ * @param env 
+ * @param name A ./saves/ mappán belüli betöltendő fájl neve. (Max 50 karakter!)
+ * @param t Egy üres, iniciálizatlan Tabla objektum.
+ * @return 1 ha sikeres
+ */
+int betolt_betoltes(Ablak_info *env, char *name, Tabla *t);
+/**
  * @brief Beolvas egy szoveget a billentyuzetrol.
  * A kódrészlet az infoC oldalról származik apró módosításokkal.
  * @param dest A tömb, ahová a beolvasott szöveg kerül.

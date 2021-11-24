@@ -80,6 +80,9 @@ int main(void){
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.b) ){
                             // Betölt
+                            if (!betolt_betoltes(&env, "mentes", &t)){
+                                SDL_Log("Nem lehetett betolteni a \"%s\" nevu mentest.", "mentes");
+                            }
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.s) ){
                             // Súgó

@@ -274,34 +274,72 @@ void jatek_play_stop(Ablak_info *env, Tabla *t, int play_stop){
 void jatek_mentes(Ablak_info *env, TTF_Font *font_mentes, Tabla *t){
     char name[63] = "./saves/";
 
-    // strcat(name, "test"); // placeholder to be replaced by user input (max 50 char)
+    // Háttér
+    boxRGBA(env->renderer, 0, 0, env->width_screen, env->height_screen, 17, 28, 7, 220);
+
     char beolvasott[51];
+    beolvasott[0] = '\0';
     SDL_Rect hova = {(env->width_screen-400)/2, (env->height_screen-40)/2, 400, 40};
     SDL_Color hatter = {17, 28, 7};
     SDL_Color szoveg = {155, 255, 61};
-    input_text(beolvasott, 50, hova, hatter, szoveg, font_mentes, env->renderer);
+    int sikeres = input_text(beolvasott, 50, hova, hatter, szoveg, font_mentes, env->renderer);
     strcat(name, beolvasott);
-    
-    strcat(name, ".txt");
-    FILE* fp = fopen(name, "wt");
-    if(fp == NULL){
-        SDL_Log("Hiba a %s fajl megnyitasaban!\n", name); // placeholder for actual message to the usr
-    }
-    else{
-        fprintf(fp, "0.1\n");
-        fprintf(fp, "%d %d\n", t->sz, t->m);
-        for(int sor = 0; sor < (t->m); sor++){
-        for (int oszlop = 0; oszlop < (t->sz); oszlop++){
-            fprintf(fp, "%d", t->g[sor][oszlop]);
-            if (oszlop != (t->sz-1)){
-                fputc(' ', fp);
+    if(strlen(beolvasott) && sikeres){
+        strcat(name, ".txt");
+        FILE* fp = fopen(name, "wt");
+        if(fp == NULL){
+            SDL_Log("Hiba a %s fajl megnyitasaban!\n", name); // placeholder for actual message to the usr
+        }
+        else{
+            fprintf(fp, "0.1\n");
+            fprintf(fp, "%d %d\n", t->sz, t->m);
+            for(int sor = 0; sor < (t->m); sor++){
+            for (int oszlop = 0; oszlop < (t->sz); oszlop++){
+                fprintf(fp, "%d", t->g[sor][oszlop]);
+                if (oszlop != (t->sz-1)){
+                    fputc(' ', fp);
+                }
             }
+            fputc('\n', fp);
+            }
+            fclose(fp);
         }
-        fputc('\n', fp);
-        }
-        fclose(fp);
     }
     jatek(env, t);
+}
+
+int betolt_betoltes(Ablak_info *env, char *name, Tabla *t){
+    
+    char filename[63] = "./saves/";
+    strcat(filename, name);
+    strcat(filename, ".txt");
+    FILE* fp = fopen(filename, "rt");
+    if(fp == NULL){
+        SDL_Log("Hiba a %s fajl megnyitasaban!\n", filename);
+        return 0;
+    }
+
+    //fájl beolvasása
+    char v[4];
+    if (fscanf(fp, "%[^\n]", &v) == 0) {return 0;}
+    v[4] = '\0';
+    if (strcmp(v, "0.1")) {return 0;}
+    int szel, mag, hiba;
+    if (fscanf(fp, " %d%d%[^\n]", &szel, &mag, &hiba) != 2) {return 0;}
+    init_tabla(t, szel-2, mag-2);
+
+    for (int sor = 0; sor < t->m; sor++) {
+        for (int oszlop = 0; oszlop < t->sz; oszlop++) {
+            int c;
+            fscanf(fp, "%d", &c);
+            // if (c != 0 || c != 1) {destroy_tabla(t); return 0;}
+            t->g[sor][oszlop] = c;
+        }
+    }
+    
+    fclose(fp);
+    jatek(env, t);
+    return 1;
 }
 
 SDL_Rect ikon_kirazol(Ablak_info *env, Icon ikon, int x, int y){
@@ -385,6 +423,9 @@ int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SD
                 if (event.key.keysym.sym == SDLK_RETURN) {
                     enter = 1;
                 }
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    kilep = 1;
+                }
                 break;
  
             /* A feldolgozott szoveg bemenete */
@@ -408,6 +449,9 @@ int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SD
                 SDL_PushEvent(&event);
                 kilep = 1;
                 break;
+            
+            default:
+                SDL_PushEvent(&event);
         }
     }
  
