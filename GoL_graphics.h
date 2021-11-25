@@ -167,5 +167,13 @@ int betolt_betoltes(Ablak_info *env, char *name, Tabla *t);
  * @return 1 ha sikerült, 0 ha nem sikerült a beolvasás
  */
 int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SDL_Color szoveg, TTF_Font *font, SDL_Renderer *renderer);
+/**
+ * @brief Megváltoztatja az Ablak_info objektum state-jét s_sugo-ra.
+ * Letörli a megjelenítőt és kiírja a súgót. Megjeníti a képet.
+ * @param env 
+ * @param font_sugo A szöveg kiírásához használt font.
+ * @param kep A megjelenítendő kép (John Conway-ról).
+ */
+void sugo(Ablak_info *env, TTF_Font *font_sugo, SDL_Texture *kep);
 
 #endif

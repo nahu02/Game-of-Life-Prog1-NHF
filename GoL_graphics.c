@@ -235,7 +235,7 @@ void jatek(Ablak_info *env, Tabla *t){
 
     // Gombok
     // Home jobb felül, Save jobb alul, Next bal alul, Play/Pause bal alul a Next felett
-    env->ikonok_helye.h = ikon_kirazol(env, Home, env->width_screen - 69, 5                      ); // TODO
+    env->ikonok_helye.h = ikon_kirazol(env, Home, env->width_screen - 69, 5                      );
     env->ikonok_helye.s = ikon_kirazol(env, Save, env->width_screen - 69, env->height_screen - 69);
     env->ikonok_helye.n = ikon_kirazol(env, Next, 5,                      env->height_screen - 69);
     env->ikonok_helye.p = ikon_kirazol(env, Play, 5,                      env->height_screen - (69 + 10 + 64)); // TODO
@@ -485,4 +485,71 @@ int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SD
     /* 1 jelzi a helyes beolvasast; = ha enter miatt allt meg a ciklus */
     SDL_StopTextInput();
     return enter;
+}
+
+void sugo(Ablak_info *env, TTF_Font *font_sugo, SDL_Texture *kep){
+    env->state = s_sugo;
+    SDL_RenderClear(env->renderer);
+
+    // Háttér
+    boxRGBA(env->renderer, 0, 0, env->width_screen, env->height_screen, 17, 28, 7, 255);
+
+    SDL_Rect szoveg_canvas, kep_canvas, rip_canvas;
+    if(env->width_screen < 800){
+        kep_canvas.x = 0;
+        kep_canvas.w = 0;
+        kep_canvas.h = 0;
+        kep_canvas.y = 0;
+
+        rip_canvas.x = 0;
+        rip_canvas.w = 0;
+        rip_canvas.h = 0;
+        rip_canvas.y = 0;
+
+        szoveg_canvas.x = 2;
+        szoveg_canvas.y = 2;
+        szoveg_canvas.w = env->width_screen - 4;
+        szoveg_canvas.h = env->height_screen - 4;
+
+    }
+    else if(env->width_screen < 900){
+        kep_canvas.x = 2*env->width_screen/3;
+        kep_canvas.w = 90;
+        kep_canvas.h = kep_canvas.w/(6/5);
+        kep_canvas.y = env->height_screen-kep_canvas.h-5;
+
+        rip_canvas.x = kep_canvas.x + kep_canvas.w + 10;
+        rip_canvas.w = env->width_screen - rip_canvas.x;
+        rip_canvas.h = kep_canvas.h;
+        rip_canvas.y = kep_canvas.y;
+
+        szoveg_canvas.x = 10;
+        szoveg_canvas.y = 5;
+        szoveg_canvas.w = env->width_screen- 20;
+        szoveg_canvas.h = env->height_screen - 30;
+
+    }
+    else{
+        kep_canvas.x = 10;
+        kep_canvas.w = env->width_screen/3 - 10;
+        kep_canvas.h = kep_canvas.w/(6/5);
+        kep_canvas.y = (env->height_screen - kep_canvas.h)/2;
+
+        rip_canvas.x = kep_canvas.x;
+        rip_canvas.w = kep_canvas.w;
+        rip_canvas.y = kep_canvas.y + kep_canvas.h + 10;
+        rip_canvas.h = env->height_screen - rip_canvas.y;
+
+        szoveg_canvas.x = env->width_screen/3 + 10;
+        szoveg_canvas.y = 10;
+        szoveg_canvas.w = env->width_screen - kep_canvas.w - 20;
+        szoveg_canvas.h = env->height_screen - 20;
+    }
+
+    char szoveg[] = "Az életjátékot (angolul: The game of life) John Horton Conway, a Cambridge-i Egyetem matematikusa találta ki. Játékként való megnevezése megtévesztő lehet, mivel „nullszemélyes” játék; és a „játékos” szerepe mindössze annyi, hogy megad egy kezdőalakzatot, és azután csak figyeli az eredményt. Matematikai szempontból az ún. sejtautomaták közé tartozik.\n\nA négyzetrács mezőit celláknak, a színes (élő) cellákat sejteknek nevezzük. Egy cella környezete a hozzá legközelebb eső 8 mező (tehát a cellához képest „átlósan” elhelyezkedő cellákat is figyelembe vesszük, feltesszük hogy a négyzetrácsnak nincs széle). Egy sejt/cella szomszédjai a környezetében lévő sejtek. A játék körökre osztott, a kezdő állapotban tetszőleges számú (egy vagy több) cellába sejteket helyezünk. Ezt követően a játékosnak nincs beleszólása a játékmenetbe. Egy sejttel (cellával) egy körben a következő három dolog történhet:\n- A sejt túléli a kört, ha két vagy három szomszédja van.\n- A sejt elpusztul, ha kettőnél kevesebb (elszigetelődés), vagy háromnál több (túlnépesedés) szomszédja van.\n- Új sejt születik minden olyan cellában, melynek környezetében pontosan három sejt található.\n\n(Forrás: wikipedia.org)";
+    char rip[] = "RIP\nJohn H. Conway";
+    SDL_RenderCopy(env->renderer, kep, NULL, &kep_canvas);
+    szoveg_kiiro(env->renderer, font_sugo, rip_canvas, rip);
+    szoveg_kiiro(env->renderer, font_sugo, szoveg_canvas, szoveg);
+    SDL_RenderPresent(env->renderer);
 }

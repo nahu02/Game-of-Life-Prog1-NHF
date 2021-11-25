@@ -31,15 +31,28 @@ int main(void){
         exit(1);
     }
 
-    TTF_Font *font_mentes = TTF_OpenFont("C:/Windows/Fonts/OCRAEXT.TTF", 32);
+    TTF_Font *font_mentes = TTF_OpenFont("C:/Windows/Fonts/Jura-Regular.ttf", 32);
     if (!font_mentes) {
         SDL_Log("Nem sikerult megnyitni a fontot! %s\n", TTF_GetError());
+        exit(1);
+    }
+
+    TTF_Font *font_sugo = TTF_OpenFont("C:/Windows/Fonts/Jura-Regular.ttf", 20);
+    if (!font_sugo) {
+        SDL_Log("Nem sikerult megnyitni a fontot! %s\n", TTF_GetError());
+        exit(1);
+    }
+
+    SDL_Texture *kep_conway = IMG_LoadTexture(env.renderer, "./src/John_H_Conway.jpg");
+    if (kep_conway == NULL) {
+        SDL_Log("Nem nyithato meg a kepfajl: %s\n", IMG_GetError());
         exit(1);
     }
 
     Harom_hely gombok_helye;
     Ikonok_hely ikonok_helye;
     Tabla t;
+    init_tabla(&t, 0, 0);
 
     menu(&env, font_menu, &gombok_helye);
  
@@ -64,7 +77,7 @@ int main(void){
                             // betolt(&env);
                             break;
                         case s_sugo:
-                            // sugo(&env);
+                            sugo(&env, font_sugo, kep_conway);
                             break;
                     }
                 }
@@ -86,6 +99,7 @@ int main(void){
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.s) ){
                             // Súgó
+                            sugo(&env, font_sugo, NULL);
                         }
                     }
                     else if(env.state == s_jatek){
