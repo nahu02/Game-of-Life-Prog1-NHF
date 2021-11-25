@@ -168,6 +168,15 @@ int betolt_betoltes(Ablak_info *env, char *name, Tabla *t);
  */
 int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SDL_Color szoveg, TTF_Font *font, SDL_Renderer *renderer);
 /**
+ * @brief Ellenőrzi az (x,y) koordináta helyét.
+ * Ha az a home ikon belsejében van, 1 a visszatérési érték és ki kell lépni a főmenübe.
+ * @param env
+ * @param x
+ * @param y
+ * @return alapesetben 0; 1, ha ki kell lépni a menübe
+ */
+int sugo_kattint(Ablak_info *env, const int x, const int y);
+/**
  * @brief Megváltoztatja az Ablak_info objektum state-jét s_sugo-ra.
  * Letörli a megjelenítőt és kiírja a súgót. Megjeníti a képet.
  * @param env 

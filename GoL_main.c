@@ -108,6 +108,11 @@ int main(void){
                             destroy_tabla(&t);
                         }
                     }
+                    else if(env.state == s_sugo){
+                        if(sugo_kattint(&env, x, y) == 1){
+                            menu(&env, font_menu, &gombok_helye);
+                        }
+                    }
                 }
                 break;
             case SDL_KEYDOWN:

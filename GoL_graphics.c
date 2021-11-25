@@ -487,6 +487,13 @@ int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SD
     return enter;
 }
 
+int sugo_kattint(Ablak_info *env, const int x, const int y){
+    if(xy_in_rect(x, y, env->ikonok_helye.h)){
+        return 1;
+    }
+    return 0;
+}
+
 void sugo(Ablak_info *env, TTF_Font *font_sugo, SDL_Texture *kep){
     env->state = s_sugo;
     SDL_RenderClear(env->renderer);
@@ -551,5 +558,6 @@ void sugo(Ablak_info *env, TTF_Font *font_sugo, SDL_Texture *kep){
     SDL_RenderCopy(env->renderer, kep, NULL, &kep_canvas);
     szoveg_kiiro(env->renderer, font_sugo, rip_canvas, rip);
     szoveg_kiiro(env->renderer, font_sugo, szoveg_canvas, szoveg);
+    env->ikonok_helye.h = ikon_kirazol(env, Home, env->width_screen - 69, 5);
     SDL_RenderPresent(env->renderer);
 }
