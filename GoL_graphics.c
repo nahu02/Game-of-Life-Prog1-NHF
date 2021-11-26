@@ -68,8 +68,13 @@ static void jatek_rajzol_cella(SDL_Renderer *renderer, Tabla *t, int sor, int os
  * @param t
  */
 static void jatek_kirajzol(SDL_Renderer *renderer, SDL_Rect hova, Tabla *t);
-
-static void jatek_play_stop(Ablak_info *env, Tabla *t);
+/**
+ * @brief Futtatja a szimulációt megszakításig.
+ * 
+ * @param env 
+ * @param t 
+ */
+static void jatek_futtat(Ablak_info *env, Tabla *t);
 /**
  * @brief Kirajzolja a képernyő koordinátákkal megadott pontjára a kért ikont.
  * 
@@ -250,7 +255,7 @@ void jatek(Ablak_info *env, Tabla *t){
 
 int jatek_kattint(Ablak_info *env, TTF_Font *font_mentes, Tabla *t, const int x, const int y){
     if(xy_in_rect(x, y, env->ikonok_helye.p)){
-        jatek_play_stop(env, t);
+        jatek_futtat(env, t);
         return 0;
     }
     if(xy_in_rect(x, y, env->ikonok_helye.n)){
@@ -292,7 +297,7 @@ void jatek_nextgen(Ablak_info *env, Tabla *t){
     free(elozo);
 }
 
-void jatek_play_stop(Ablak_info *env, Tabla *t){
+void jatek_futtat(Ablak_info *env, Tabla *t){
     boxRGBA(env->renderer, env->ikonok_helye.p.x, env->ikonok_helye.p.y, env->ikonok_helye.p.x + env->ikonok_helye.p.w, env->ikonok_helye.p.y + env->ikonok_helye.p.h, 17, 28, 7, 255);
     ikon_kirazol(env, Pause, env->ikonok_helye.p.x, env->ikonok_helye.p.y);
     SDL_RenderPresent(env->renderer);
