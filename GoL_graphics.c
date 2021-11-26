@@ -191,7 +191,6 @@ void tabla_meret(Ablak_info *env, TTF_Font *font_meret, Tabla *t){
     }
 
     init_tabla(t, szel, mag);
-
     jatek(env, t);
 }
 
@@ -506,7 +505,13 @@ int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SD
             case SDL_TEXTEDITING:
                 strcpy(composition, event.edit.text);
                 break;
- 
+
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT) 
+                    if (!xy_in_rect(event.button.x, event.button.y, teglalap))
+                        kilep = 1;
+                break;
+
             case SDL_QUIT:
                 /* visszatesszuk a sorba ezt az eventet, mert
                  * sok mindent nem tudunk vele kezdeni */
