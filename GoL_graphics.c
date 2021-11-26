@@ -68,6 +68,8 @@ static void jatek_rajzol_cella(SDL_Renderer *renderer, Tabla *t, int sor, int os
  * @param t
  */
 static void jatek_kirajzol(SDL_Renderer *renderer, SDL_Rect hova, Tabla *t);
+
+static void jatek_play_stop(Ablak_info *env, Tabla *t);
 /**
  * @brief Kirajzolja a képernyő koordinátákkal megadott pontjára a kért ikont.
  * 
@@ -205,7 +207,6 @@ void jatek_rajzol_cella(SDL_Renderer *renderer, Tabla *t, int sor, int oszlop){
     SDL_RenderPresent(renderer);
 }
 
-
 void jatek_kirajzol(SDL_Renderer *renderer, SDL_Rect hova, Tabla *t){
     int cella_m = hova.h/(t->m-2), cella_sz = hova.w/(t->sz-2);
     // A cellák legyenek négyzet alakúak, akkor is ha a kivetítő felület nem az
@@ -250,7 +251,7 @@ void jatek(Ablak_info *env, Tabla *t){
 
 int jatek_kattint(Ablak_info *env, TTF_Font *font_mentes, Tabla *t, const int x, const int y){
     if(xy_in_rect(x, y, env->ikonok_helye.p)){
-        // Hát, ezt valahogy ki kéne még találni
+        jatek_play_stop(env, t);
         return 0;
     }
     if(xy_in_rect(x, y, env->ikonok_helye.n)){
@@ -292,11 +293,47 @@ void jatek_nextgen(Ablak_info *env, Tabla *t){
     free(elozo);
 }
 
-void jatek_play_stop(Ablak_info *env, Tabla *t, int play_stop){
-    while (!play_stop){
+void jatek_play_stop(Ablak_info *env, Tabla *t){
+    boxRGBA(env->renderer, env->ikonok_helye.p.x, env->ikonok_helye.p.y, env->ikonok_helye.p.x + env->ikonok_helye.p.w, env->ikonok_helye.p.y + env->ikonok_helye.p.h, 17, 28, 7, 255);
+    ikon_kirazol(env, Pause, env->ikonok_helye.p.x, env->ikonok_helye.p.y);
+    SDL_RenderPresent(env->renderer);
+    int kilep = 0;
+    while (!kilep){
+        SDL_Event ev;
+        SDL_WaitEvent(&ev);
+        switch (ev.type) {
+            case SDL_MOUSEBUTTONDOWN:
+                if(ev.button.button == SDL_BUTTON_LEFT){
+                    kilep = 1;
+                }
+                break;
+
+            case SDL_KEYDOWN:
+                if (ev.key.keysym.sym == SDLK_ESCAPE){
+                    kilep = 1;
+                }
+                break;
+            
+            case SDL_WINDOWEVENT:
+                if(ev.window.event == SDL_WINDOWEVENT_RESIZED){
+                    SDL_PushEvent(&ev);
+                    kilep = 1;
+                }
+                break;
+
+            case SDL_QUIT:
+                SDL_PushEvent(&ev);
+                kilep = 1;
+                break;
+            
+            default:
+                SDL_PushEvent(&ev);
+        }
         jatek_nextgen(env, t);
-        SDL_Delay(500);
     }
+    boxRGBA(env->renderer, env->ikonok_helye.p.x, env->ikonok_helye.p.y, env->ikonok_helye.p.x + env->ikonok_helye.p.w, env->ikonok_helye.p.y + env->ikonok_helye.p.h, 17, 28, 7, 255);
+    ikon_kirazol(env, Play, env->ikonok_helye.p.x, env->ikonok_helye.p.y);
+    SDL_RenderPresent(env->renderer);
 }
 
 void jatek_mentes(Ablak_info *env, TTF_Font *font_mentes, Tabla *t){
