@@ -73,7 +73,7 @@ int main(void){
                             jatek(&env,&t);
                             break;
                         case s_betolt:
-                            betolt(&env, font_mentes, &t);
+                            betolt(&env, font_mentes);
                             break;
                         case s_sugo:
                             sugo(&env, font_sugo, kep_conway);
@@ -92,7 +92,7 @@ int main(void){
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.b) ){
                             // Betölt
-                            betolt(&env, font_mentes, &t);
+                            betolt(&env, font_mentes);
                             // if (!betolt_betoltes(&env, "mentes", &t)){
                             //     SDL_Log("Nem lehetett betolteni a \"%s\" nevu mentest.", "mentes");
                             // }
@@ -106,6 +106,11 @@ int main(void){
                         if(jatek_kattint(&env, font_mentes, &t, x, y) == 1){
                             menu(&env, font_menu, &gombok_helye);
                             destroy_tabla(&t);
+                        }
+                    }
+                    else if(env.state == s_betolt){
+                        if(betolt_kattint(&env, &t, x, y) == 1){
+                            menu(&env, font_menu, &gombok_helye);
                         }
                     }
                     else if(env.state == s_sugo){

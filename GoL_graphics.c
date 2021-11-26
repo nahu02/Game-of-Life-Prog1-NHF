@@ -377,7 +377,6 @@ SDL_Rect ikon_kirazol(Ablak_info *env, Icon ikon, int x, int y){
     return hova;
 }
 
-
 int input_text(char *dest, size_t hossz, SDL_Rect teglalap, SDL_Color hatter, SDL_Color szoveg, TTF_Font *font, SDL_Renderer *renderer) {
     /* Ez tartalmazza az aktualis szerkesztest */
     char composition[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
@@ -563,7 +562,52 @@ void sugo(Ablak_info *env, TTF_Font *font_sugo, SDL_Texture *kep){
     SDL_RenderPresent(env->renderer);
 }
 
-void betolt(Ablak_info *env, TTF_Font *font_betolt, Tabla *t){
+int betolt_kattint(Ablak_info *env, Tabla *t, const int x, const int y){
+    if(xy_in_rect(x, y, env->ikonok_helye.h)){
+        return 1;
+    }
+
+    HANDLE find_h = NULL;
+    WIN32_FIND_DATA file;
+    char path[1023];
+    char filename[255];
+    char mappa[] = "./saves";
+
+    sprintf(path, "%s/*.txt", mappa);
+
+    if((find_h = FindFirstFile(path, &file)) == INVALID_HANDLE_VALUE){
+        SDL_Log("Hiba a %s path-on.", mappa);
+        exit(1);
+    }
+
+    SDL_Rect gombok[10];
+    char filenames[10][255];
+    int cnt = 0;
+    do{
+        if(strcmp(file.cFileName, ".") != 0 && strcmp(file.cFileName, "..") != 0){
+            sprintf(filename, "%s", file.cFileName);
+            filename[strlen(filename)-4] = '\0';
+            gombok[cnt].x = 5;
+            gombok[cnt].y = env->height_screen/12 + cnt*(env->height_screen/12 + env->height_screen/12/11);
+            gombok[cnt].w = env->width_screen-10;
+            gombok[cnt].h = env->height_screen/12;
+            strcpy(filenames[cnt],filename);
+        }
+    } while(++cnt<10 && FindNextFile(find_h, &file));
+
+    for(int i = 0; i<=cnt; i++){
+        if(xy_in_rect(x, y, gombok[i])){
+            betolt_betoltes(env, filenames[i], t);
+            FindClose(find_h);
+            return 0;
+        }
+    }
+
+    FindClose(find_h);
+    return 0;
+}
+
+void betolt(Ablak_info *env, TTF_Font *font_betolt){
     env->state = s_betolt;
     SDL_RenderClear(env->renderer);
 
@@ -588,11 +632,15 @@ void betolt(Ablak_info *env, TTF_Font *font_betolt, Tabla *t){
         if(strcmp(file.cFileName, ".") != 0 && strcmp(file.cFileName, "..") != 0){
             sprintf(filename, "%s", file.cFileName);
             filename[strlen(filename)-4] = '\0';
-            SDL_Rect gomb = {5, 5 + cnt*(env->height_screen/11 + env->height_screen/11/10), env->width_screen-10, env->height_screen/11};
+            SDL_Rect gomb = {5, env->height_screen/12 + cnt*(env->height_screen/12 + env->height_screen/12/11), env->width_screen-10, env->height_screen/12};
             rajzol_gomb(env->renderer, font_betolt, gomb, filename);
         }
     } while(++cnt<10 && FindNextFile(find_h, &file));
 
+    char szoveg[] = "Kérlek válassz a mentések közül!";
+    SDL_Rect szoveg_rect = {5, 5, env->width_screen-10, env->height_screen/12-10};
+    szoveg_kiiro(env->renderer, font_betolt, szoveg_rect, szoveg);
+    env->ikonok_helye.h = ikon_kirazol(env, Home, env->width_screen-69, 5);
     FindClose(find_h);
     SDL_RenderPresent(env->renderer);
 }
