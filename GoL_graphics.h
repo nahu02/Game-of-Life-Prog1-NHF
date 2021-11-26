@@ -184,9 +184,23 @@ int sugo_kattint(Ablak_info *env, const int x, const int y);
  * @param kep A megjelenítendő kép (John Conway-ról).
  */
 void sugo(Ablak_info *env, TTF_Font *font_sugo, SDL_Texture *kep);
-
+/**
+ * @brief Ellenőrzi az (x,y) koordináta helyét.
+ * Ha az egy gombon van, meghívja a gomb nevével a betolt_betoltes függvényt.
+ * Ha az a home ikon belsejében van, 1 a visszatérési érték és ki kell lépni a főmenübe.
+ * @param env 
+ * @param t 
+ * @param x 
+ * @param y 
+ * @return alapesetben 0; 1, ha ki kell lépni a menübe 
+ */
 int betolt_kattint(Ablak_info *env, Tabla *t, const int x, const int y);
-
+/**
+ * @brief Megváltoztatja az Ablak_info objektum state-jét s_betoltes-re.
+ * Letörli a megjelenítőt és kirajzolja a ./saves mappában található első 10 mentés betöltésére való gombokat.
+ * @param env 
+ * @param font_betolt Az ebben az állapotban használandó betűtípus.
+ */
 void betolt(Ablak_info *env, TTF_Font *font_betolt);
 
 #endif
