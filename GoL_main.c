@@ -22,7 +22,7 @@
 #include "GoL_graphics.h"
 
 int main(void){
-    Ablak_info env = {NULL, s_menu, 800, 600, NULL};
+    Ablak_info env = {NULL, s_menu, 1000, 600, NULL};
     sdl_init(&env);
 
     TTF_Font *font_menu = TTF_OpenFont("C:/Windows/Fonts/OCRAEXT.TTF", 54);
@@ -99,7 +99,7 @@ int main(void){
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.s) ){
                             // Súgó
-                            sugo(&env, font_sugo, NULL);
+                            sugo(&env, font_sugo, kep_conway);
                         }
                     }
                     else if(env.state == s_jatek){
