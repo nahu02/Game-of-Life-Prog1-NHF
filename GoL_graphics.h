@@ -185,4 +185,6 @@ int sugo_kattint(Ablak_info *env, const int x, const int y);
  */
 void sugo(Ablak_info *env, TTF_Font *font_sugo, SDL_Texture *kep);
 
+void betolt(Ablak_info *env, TTF_Font *font_betolt, Tabla *t);
+
 #endif

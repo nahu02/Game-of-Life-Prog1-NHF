@@ -51,8 +51,7 @@ int main(void){
 
     Harom_hely gombok_helye;
     Ikonok_hely ikonok_helye;
-    Tabla t;
-    init_tabla(&t, 0, 0);
+    Tabla t = {NULL, 0, 0, NULL};
 
     menu(&env, font_menu, &gombok_helye);
  
@@ -74,7 +73,7 @@ int main(void){
                             jatek(&env,&t);
                             break;
                         case s_betolt:
-                            // betolt(&env);
+                            betolt(&env, font_mentes, &t);
                             break;
                         case s_sugo:
                             sugo(&env, font_sugo, kep_conway);
@@ -93,9 +92,10 @@ int main(void){
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.b) ){
                             // Betölt
-                            if (!betolt_betoltes(&env, "mentes", &t)){
-                                SDL_Log("Nem lehetett betolteni a \"%s\" nevu mentest.", "mentes");
-                            }
+                            betolt(&env, font_mentes, &t);
+                            // if (!betolt_betoltes(&env, "mentes", &t)){
+                            //     SDL_Log("Nem lehetett betolteni a \"%s\" nevu mentest.", "mentes");
+                            // }
                         }
                         else if ( xy_in_rect(x, y, gombok_helye.s) ){
                             // Súgó
@@ -125,7 +125,10 @@ int main(void){
     
     destroy_tabla(&t);
     TTF_CloseFont(font_menu);
+    TTF_CloseFont(font_mentes);
+    TTF_CloseFont(font_sugo);
     SDL_DestroyTexture(env.icons);
+    SDL_DestroyTexture(kep_conway);
     SDL_Quit();
     return 0;
 }

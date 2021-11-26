@@ -18,6 +18,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <math.h>
+#include <windows.h>
 #include "src/debugmalloc.h"
 #include "GoL_logics.h"
 #include "GoL_graphics.h"
@@ -42,13 +43,13 @@ typedef enum Icon{
 static void szoveg_kiiro(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect hova, const char str[]);
 /**
  * @brief kirajzol egy téglalapot és a megadott szöveget írja rá.
- * A menü gombjainak kirajzolásához használt.
+ * Későbbiekben a kattintás ellenőrzéséhez ajánlott eltárolni a megadott SDL_Rect négyszöget.
  * @param renderer 
- * @param font_menu Egy betöltött betűtípus
+ * @param font Egy betöltött betűtípus, amivel a gombra a szöveg kerül.
  * @param gomb 
  * @param felirat
  */
-static void menu_rajzol_gomb(SDL_Renderer *renderer, TTF_Font *font_menu, SDL_Rect gomb, const char felirat[]);
+static void rajzol_gomb(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect gomb, const char felirat[]);
 /**
  * @brief Kirajzolja egy Tábla objektum g gridje szerinti megadott (sor, oszlop) cellát a képernyőre.
  * Frissíti a renderert.
@@ -125,9 +126,9 @@ void szoveg_kiiro(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect hova, const c
     SDL_DestroyTexture(felirat_t);
 }
 
-void menu_rajzol_gomb(SDL_Renderer *renderer, TTF_Font *font_menu, SDL_Rect gomb, const char felirat[]){
+void rajzol_gomb(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect gomb, const char felirat[]){
     boxRGBA(renderer, gomb.x, gomb.y, gomb.x + gomb.w, gomb.y + gomb.h, 77, 128, 31, 127);
-    szoveg_kiiro(renderer, font_menu, gomb, felirat);
+    szoveg_kiiro(renderer, font, gomb, felirat);
 }
 
 void menu(Ablak_info *env, TTF_Font *font_menu, Harom_hely *gombok_helye){
@@ -147,11 +148,11 @@ void menu(Ablak_info *env, TTF_Font *font_menu, Harom_hely *gombok_helye){
     // Háttér
     boxRGBA(env->renderer, 0, 0, env->width_screen, env->height_screen, 17, 28, 7, 255);
 
-    menu_rajzol_gomb(env->renderer, font_menu, jatek,  "JÁTÉK");
+    rajzol_gomb(env->renderer, font_menu, jatek,  "JÁTÉK");
 
-    menu_rajzol_gomb(env->renderer, font_menu, betolt, "BETÖLTÉS");
+    rajzol_gomb(env->renderer, font_menu, betolt, "BETÖLTÉS");
 
-    menu_rajzol_gomb(env->renderer, font_menu, sugo,   "SÚGÓ");
+    rajzol_gomb(env->renderer, font_menu, sugo,   "SÚGÓ");
 
     SDL_RenderPresent(env->renderer);
 }
@@ -348,11 +349,11 @@ int betolt_betoltes(Ablak_info *env, char *name, Tabla *t){
 
     //fájl beolvasása
     char v[4];
-    if (fscanf(fp, "%[^\n]", &v) == 0) {return 0;}
+    if (fscanf(fp, "%[^\n]", &v) == 0) {fclose(fp); return 0;}
     v[4] = '\0';
-    if (strcmp(v, "0.1")) {return 0;}
+    if (strcmp(v, "0.1")) {fclose(fp); return 0;}
     int szel, mag, hiba;
-    if (fscanf(fp, " %d%d%[^\n]", &szel, &mag, &hiba) != 2) {return 0;}
+    if (fscanf(fp, " %d%d%[^\n]", &szel, &mag, &hiba) != 2) {fclose(fp); return 0;}
     init_tabla(t, szel-2, mag-2);
 
     for (int sor = 0; sor < t->m; sor++) {
@@ -559,5 +560,39 @@ void sugo(Ablak_info *env, TTF_Font *font_sugo, SDL_Texture *kep){
     szoveg_kiiro(env->renderer, font_sugo, rip_canvas, rip);
     szoveg_kiiro(env->renderer, font_sugo, szoveg_canvas, szoveg);
     env->ikonok_helye.h = ikon_kirazol(env, Home, env->width_screen - 69, 5);
+    SDL_RenderPresent(env->renderer);
+}
+
+void betolt(Ablak_info *env, TTF_Font *font_betolt, Tabla *t){
+    env->state = s_betolt;
+    SDL_RenderClear(env->renderer);
+
+    // Háttér
+    boxRGBA(env->renderer, 0, 0, env->width_screen, env->height_screen, 17, 28, 7, 255);
+
+    HANDLE find_h = NULL;
+    WIN32_FIND_DATA file;
+    char path[1023];
+    char filename[255];
+    char mappa[] = "./saves";
+
+    sprintf(path, "%s/*.txt", mappa);
+
+    if((find_h = FindFirstFile(path, &file)) == INVALID_HANDLE_VALUE){
+        SDL_Log("Hiba a %s path-on.", mappa);
+        exit(1);
+    }
+
+    int cnt = 0;
+    do{
+        if(strcmp(file.cFileName, ".") != 0 && strcmp(file.cFileName, "..") != 0){
+            sprintf(filename, "%s", file.cFileName);
+            filename[strlen(filename)-4] = '\0';
+            SDL_Rect gomb = {5, 5 + cnt*(env->height_screen/11 + env->height_screen/11/10), env->width_screen-10, env->height_screen/11};
+            rajzol_gomb(env->renderer, font_betolt, gomb, filename);
+        }
+    } while(++cnt<10 && FindNextFile(find_h, &file));
+
+    FindClose(find_h);
     SDL_RenderPresent(env->renderer);
 }

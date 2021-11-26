@@ -55,7 +55,11 @@ void destroy_tabla(Tabla* regitabla){
         }
         free(regitabla -> g);
         free(regitabla -> rects);
-        regitabla = NULL;
+        regitabla->g = NULL;
+        regitabla->rects = NULL;
+        regitabla->sz = 0;
+        regitabla->m = 0;
+
     }
 }
 
